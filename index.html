@@ -81,4 +81,35 @@ d3.json('world.json', (error, world) => {
   render()
 })
 
+var controls = d3.select('body').append('div')
+    .attr('style', 'position: absolute; top: 0; left: 0;')
+
+function control(label, initial, min, max, callback) {
+  var div = controls.append('div')
+  var input = div.append('input')
+      .attr('type', 'range')
+      .attr('min', min)
+      .attr('max', max)
+      .attr('value', initial)
+      .on('input', () => {
+        let v = input[0][0].value
+        callback(v)
+        indicator.text(v)
+        render()
+      })
+  div.append('span').text(label + ' ')
+  var indicator = div.append('span').text(initial)
+}
+
+let lng0 = () => projection.rotate()[0]
+let lat0 = () => projection.rotate()[1]
+let rot0 = () => projection.rotate()[2]
+let setlng0 = (v) => projection.rotate([v, lat0(), rot0()])
+let setlat0 = (v) => projection.rotate([lng0(), v, rot0()])
+let setrot0 = (v) => projection.rotate([lng0(), lat0(), v])
+control('scale', projection.scale(), 100, 500, projection.scale)
+control('lng0', lng0(), -180, 180, setlng0)
+control('lat0', lat0(), -90, 90, setlat0)
+control('rot0', lat0(), -180, 180, setrot0)
+
 </script>
