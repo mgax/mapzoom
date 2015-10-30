@@ -1,0 +1,79 @@
+<!doctype html>
+<meta charset=utf-8>
+<style>
+
+html, body {
+  height: 100%;
+}
+
+.stroke {
+  fill: none;
+  stroke: #000;
+  stroke-width: 3px;
+}
+
+.fill {
+  fill: #fff;
+}
+
+.graticule {
+  fill: none;
+  stroke: #777;
+  stroke-width: .5px;
+  stroke-opacity: .5;
+}
+
+.land {
+  fill: #222;
+}
+
+.boundary {
+  fill: none;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+</style>
+<body>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3-geo-projection/0.2.9/d3.geo.projection.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script type="text/babel">
+
+var width = 960
+var height = 600
+
+var projection = d3.geo.winkel3()
+    .scale(182)
+    .translate([width / 2, height / 2])
+    .precision(.1)
+
+var path = d3.geo.path()
+    .projection(projection)
+
+var svg = d3.select('body').append('svg')
+    .attr('width', width)
+    .attr('height', height)
+
+d3.json('world.json', (error, world) => {
+  if (error) throw error
+
+  svg.append('path')
+      .datum(topojson.feature(world, world.objects.countries))
+      .attr('class', 'land')
+      .attr('d', path)
+
+  svg.append('path')
+      .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
+      .attr('class', 'boundary')
+      .attr('d', path)
+
+  svg.append('path')
+      .datum(d3.geo.graticule())
+      .attr('class', 'graticule')
+      .attr('d', path)
+
+})
+
+</script>
