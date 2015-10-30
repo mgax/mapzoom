@@ -56,24 +56,29 @@ var svg = d3.select('body').append('svg')
     .attr('width', width)
     .attr('height', height)
 
+var map = svg.append('g')
+
+function render() {
+  map.selectAll('path')
+      .attr('d', path)
+}
+
 d3.json('world.json', (error, world) => {
   if (error) throw error
 
-  svg.append('path')
+  map.append('path')
       .datum(topojson.feature(world, world.objects.countries))
       .attr('class', 'land')
-      .attr('d', path)
 
-  svg.append('path')
+  map.append('path')
       .datum(topojson.mesh(world, world.objects.countries, (a, b) => a !== b))
       .attr('class', 'boundary')
-      .attr('d', path)
 
-  svg.append('path')
+  map.append('path')
       .datum(d3.geo.graticule())
       .attr('class', 'graticule')
-      .attr('d', path)
 
+  render()
 })
 
 </script>
