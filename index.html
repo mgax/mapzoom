@@ -23,6 +23,11 @@ html, body {
   stroke-opacity: .5;
 }
 
+.route {
+  fill: none;
+  stroke: red;
+}
+
 .land {
   fill: #222;
 }
@@ -77,6 +82,16 @@ d3.json('world.json', (error, world) => {
   map.append('path')
       .datum(d3.geo.graticule())
       .attr('class', 'graticule')
+
+  map.append('path')
+      .datum({
+        type: 'LineString',
+        coordinates: [
+          [54.8622, 24.7717],
+          [-122.5078, 37.7578],
+        ],
+      })
+      .attr('class', 'route')
 
   render()
 })
