@@ -135,12 +135,32 @@ let ctrl = {
   rot0: control('rot0', lat0(), -180, 180, setrot0),
 }
 
-function set(vl) {
-  setscal(vl[0]); ctrl.scal(vl[0])
-  setlng0(vl[1]); ctrl.lng0(vl[1])
-  setlat0(vl[2]); ctrl.lat0(vl[2])
-  setrot0(vl[3]); ctrl.rot0(vl[3])
-  render()
+function set(v1) {
+  var v0 = [scal(), lng0(), lat0(), rot0()]
+
+  map.selectAll('path').transition()
+      .duration(750)
+      .attrTween('d', tween);
+
+  function tween(d) {
+    return (t) => {
+      let vt = [
+        at(v0[0], v1[0], t),
+        at(v0[1], v1[1], t),
+        at(v0[2], v1[2], t),
+        at(v0[3], v1[3], t),
+      ]
+      setscal(vt[0]); ctrl.scal(vt[0])
+      setlng0(vt[1]); ctrl.lng0(vt[1])
+      setlat0(vt[2]); ctrl.lat0(vt[2])
+      setrot0(vt[3]); ctrl.rot0(vt[3])
+      return path(d)
+    }
+  }
+}
+
+function at(v0, v1, t) {
+  return (1 - t) * v0 + t * v1
 }
 
 let btns = controls.append('div')
